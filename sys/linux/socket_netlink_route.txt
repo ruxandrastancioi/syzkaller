@@ -559,6 +559,10 @@ ipip6_policy [
 	IFLA_IPTUN_FWMARK		nlattr[IFLA_IPTUN_FWMARK, int32]
 ] [varlen]
 
+rpl_iptunnel_policy [
+       IPL_IPTUNNEL_SRH                nlattr[IPL_IPTUNNEL_SRH, ipv6_rpl_sr_hdr]
+] [varlen]
+
 ip6_tnl_policy [
 	IFLA_IPTUN_LINK			nlattr[IFLA_IPTUN_LINK, ifindex]
 	IFLA_IPTUN_LOCAL		nlattr[IFLA_IPTUN_LOCAL, ipv6_addr]
@@ -593,6 +597,15 @@ ifa_ipv6_policy [
 	IFA_CACHEINFO	nlattr[IFA_CACHEINFO, ifa_cacheinfo]
 	IFA_FLAGS	nlattr[IFA_FLAGS, flags[ifa_flags, int32]]
 ] [varlen]
+
+ipv6_rpl_sr_hdr {
+	nexthdr		int8
+	hdrlen		int8
+	type		int8
+	segments_left	int8
+	control		int32
+	address		array[int8, segments_left]
+} [packed]
 
 rtm_ipv4_policy [
 	RTA_DST		nlattr[RTA_DST, ipv4_addr]
