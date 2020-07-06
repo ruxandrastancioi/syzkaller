@@ -598,6 +598,17 @@ ifa_ipv6_policy [
 	IFA_FLAGS	nlattr[IFA_FLAGS, flags[ifa_flags, int32]]
 ] [varlen]
 
+lwtunnel_encap_attr [
+	generic		array[int8]
+	typed		nlattr_tt[int16:14[0:150], 0, 0, ipv6_rpl_sr_hdr]
+	nested		nlattr_tt[int16:14[0:150], 0, 1, array[ipv6_rpl_sr_hdr_nonested]]
+] [varlen]
+
+ipv6_rpl_sr_hdr_nonested [
+	generic		array[int8]
+	typed	nlattr_tt[int16:14[0:150], 0, 0, ipv6_rpl_sr_hdr]
+] [varlen]
+
 ipv6_rpl_sr_hdr {
 	nexthdr		int8
 	hdrlen		int8
