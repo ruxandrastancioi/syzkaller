@@ -598,6 +598,17 @@ ifa_ipv6_policy [
 	IFA_FLAGS	nlattr[IFA_FLAGS, flags[ifa_flags, int32]]
 ] [varlen]
 
+lwtunnel_encap_attr [
+	generic		array[int8]
+	typed		nlattr_tt[int16:14[0:150], 0, 0, ipv6_rpl_sr_hdr]
+	nested		nlattr_tt[int16:14[0:150], 0, 1, array[ipv6_rpl_sr_hdr_nonested]]
+] [varlen]
+
+ipv6_rpl_sr_hdr_nonested [
+	generic		array[int8]
+	typed		nlattr_tt[int16:14[0:150], 0, 0, ipv6_rpl_sr_hdr]
+] [varlen]
+
 ipv6_rpl_sr_hdr {
 	nexthdr		int8
 	hdrlen		int8
@@ -620,8 +631,7 @@ rtm_ipv4_policy [
 	RTA_MULTIPATH	nlattr[RTA_MULTIPATH, rtnexthop]
 	RTA_FLOW	nlattr[RTA_FLOW, int32]
 	RTA_ENCAP_TYPE	nlattr[RTA_ENCAP_TYPE, flags[lwtunnel_encap_types, int16]]
-# TODO: describe RTA_ENCAP
-	RTA_ENCAP	nlnest[RTA_ENCAP, nl_generic_attr]
+	RTA_ENCAP	nlnest[RTA_ENCAP, lwtunnel_encap_attr]
 	RTA_UID		nlattr[RTA_UID, uid]
 	RTA_MARK	nlattr[RTA_MARK, int32]
 ] [varlen]
@@ -636,8 +646,7 @@ rtm_ipv6_policy [
 	RTA_MULTIPATH	nlattr[RTA_MULTIPATH, rtnexthop]
 	RTA_PREF	nlattr[RTA_PREF, int8]
 	RTA_ENCAP_TYPE	nlattr[RTA_ENCAP_TYPE, flags[lwtunnel_encap_types, int16]]
-# TODO: describe RTA_ENCAP
-	RTA_ENCAP	nlnest[RTA_ENCAP, nl_generic_attr]
+	RTA_ENCAP	nlnest[RTA_ENCAP, lwtunnel_encap_attr]
 	RTA_EXPIRES	nlattr[RTA_EXPIRES, int32]
 	RTA_UID		nlattr[RTA_UID, uid]
 	RTA_MARK	nlattr[RTA_MARK, int32]
