@@ -3,6 +3,7 @@
 # the LICENSE file.
 
 include <uapi/linux/rpl_iptunnel.h>
+include <linux/net.h>
 
 #https://elixir.bootlin.com/linux/v5.7.6/source/include/uapi/linux/rpl_iptunnel.h#L17
 define RPL_IPTUNNEL_MAX (__RPL_IPTUNNEL_MAX - 1)
