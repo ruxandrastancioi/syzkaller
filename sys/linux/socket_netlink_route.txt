@@ -559,10 +559,6 @@ ipip6_policy [
 	IFLA_IPTUN_FWMARK		nlattr[IFLA_IPTUN_FWMARK, int32]
 ] [varlen]
 
-rpl_iptunnel_policy [
-       IPL_IPTUNNEL_SRH                nlattr[IPL_IPTUNNEL_SRH, ipv6_rpl_sr_hdr]
-] [varlen]
-
 ip6_tnl_policy [
 	IFLA_IPTUN_LINK			nlattr[IFLA_IPTUN_LINK, ifindex]
 	IFLA_IPTUN_LOCAL		nlattr[IFLA_IPTUN_LOCAL, ipv6_addr]
@@ -598,15 +594,6 @@ ifa_ipv6_policy [
 	IFA_FLAGS	nlattr[IFA_FLAGS, flags[ifa_flags, int32]]
 ] [varlen]
 
-ipv6_rpl_sr_hdr {
-	nexthdr		int8
-	hdrlen		int8
-	type		int8
-	segments_left	int8
-	control		int32
-	address		array[int8, segments_left]
-} [packed]
-
 rtm_ipv4_policy [
 	RTA_DST		nlattr[RTA_DST, ipv4_addr]
 	RTA_SRC		nlattr[RTA_SRC, ipv4_addr]
@@ -620,8 +607,7 @@ rtm_ipv4_policy [
 	RTA_MULTIPATH	nlattr[RTA_MULTIPATH, rtnexthop]
 	RTA_FLOW	nlattr[RTA_FLOW, int32]
 	RTA_ENCAP_TYPE	nlattr[RTA_ENCAP_TYPE, flags[lwtunnel_encap_types, int16]]
-# TODO: describe RTA_ENCAP
-	RTA_ENCAP	nlnest[RTA_ENCAP, nl_generic_attr]
+	RTA_ENCAP	nlnest[RTA_ENCAP, lwtunnel_encap_attr]
 	RTA_UID		nlattr[RTA_UID, uid]
 	RTA_MARK	nlattr[RTA_MARK, int32]
 ] [varlen]
@@ -636,8 +622,7 @@ rtm_ipv6_policy [
 	RTA_MULTIPATH	nlattr[RTA_MULTIPATH, rtnexthop]
 	RTA_PREF	nlattr[RTA_PREF, int8]
 	RTA_ENCAP_TYPE	nlattr[RTA_ENCAP_TYPE, flags[lwtunnel_encap_types, int16]]
-# TODO: describe RTA_ENCAP
-	RTA_ENCAP	nlnest[RTA_ENCAP, nl_generic_attr]
+	RTA_ENCAP	nlnest[RTA_ENCAP, lwtunnel_encap_attr]
 	RTA_EXPIRES	nlattr[RTA_EXPIRES, int32]
 	RTA_UID		nlattr[RTA_UID, uid]
 	RTA_MARK	nlattr[RTA_MARK, int32]
@@ -929,6 +914,33 @@ cgw_csum_crc8 {
 	crctab		array[int8, 256]
 	profile		flags[cgw_csum_crc8_profile, int8]
 	profile_data	array[int8, 20]
+} [packed]
+
+lwtunnel_encap_attr [
+#TODO: next
+	generic		array[int8]
+	typed		nlattr_tt[int16:14[0:150], 0, 0, lwtunnel_encap_data]
+	nested		nlattr_tt[int16:14[0:150], 0, 1, array[lwtunnel_encap_data_nonested]]
+] [varlen]
+
+lwtunnel_encap_data_nonested [
+#TODO: next
+	generic		array[int8]
+	ipv6_rpl_encap	nlattr_tt[int16:14[0:150], 0, 0, lwtunnel_encap_data]
+] [varlen]
+
+lwtunnel_encap_data [
+	generic		nl_generic_attr_data
+	ipv6_rpl_encap	ipv6_rpl_sr_hdr
+] [varlen]
+
+ipv6_rpl_sr_hdr {
+	nexthdr		int8
+	hdrlen		int8
+	type		int8
+	segments_left	int8
+	control		int32
+	address		array[ipv6_addr]
 } [packed]
 
 cgw_csum_crc8_profile = CGW_CRC8PRF_UNSPEC, CGW_CRC8PRF_1U8, CGW_CRC8PRF_16U8, CGW_CRC8PRF_SFFID_XOR
