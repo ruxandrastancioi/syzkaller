@@ -877,6 +877,32 @@ rtcanmsg {
 
 rtcanmsg_flags = CGW_FLAGS_CAN_ECHO, CGW_FLAGS_CAN_SRC_TSTAMP, CGW_FLAGS_CAN_IIF_TX_OK
 
+lwtunnel_encap_attr [
+	generic		array[int8]
+	typed		nlattr_tt[int16:14[0:150], 0, 0, lwtunnel_encap_data]
+	nested		nlattr_tt[int16:14[0:150], 0, 1, array[lwtunnel_encap_data_nonested]]
+] [varlen]
+
+lwtunnel_encap_data_nonested [
+	generic		array[int8]
+	ipv6_rpl_encap	nlattr_tt[int16:14[0:150], 0, 0, lwtunnel_encap_data]
+] [varlen]
+
+lwtunnel_encap_data [
+#TODO: define remaining lwtunnel_encap types
+	generic		nl_generic_attr_data
+	ipv6_rpl_encap	ipv6_rpl_sr_hdr
+] [varlen]
+
+ipv6_rpl_sr_hdr {
+	nexthdr		int8
+	hdrlen		int8
+	type		int8
+	segments_left	int8
+	control		int32
+	address		array[ipv6_addr]
+} [packed]
+
 cgw_policy [
 	CGW_MOD_AND	nlattr[CGW_MOD_AND, cgw_frame_mod]
 	CGW_MOD_OR	nlattr[CGW_MOD_OR, cgw_frame_mod]
@@ -914,33 +940,6 @@ cgw_csum_crc8 {
 	crctab		array[int8, 256]
 	profile		flags[cgw_csum_crc8_profile, int8]
 	profile_data	array[int8, 20]
-} [packed]
-
-lwtunnel_encap_attr [
-#TODO: next
-	generic		array[int8]
-	typed		nlattr_tt[int16:14[0:150], 0, 0, lwtunnel_encap_data]
-	nested		nlattr_tt[int16:14[0:150], 0, 1, array[lwtunnel_encap_data_nonested]]
-] [varlen]
-
-lwtunnel_encap_data_nonested [
-#TODO: next
-	generic		array[int8]
-	ipv6_rpl_encap	nlattr_tt[int16:14[0:150], 0, 0, lwtunnel_encap_data]
-] [varlen]
-
-lwtunnel_encap_data [
-	generic		nl_generic_attr_data
-	ipv6_rpl_encap	ipv6_rpl_sr_hdr
-] [varlen]
-
-ipv6_rpl_sr_hdr {
-	nexthdr		int8
-	hdrlen		int8
-	type		int8
-	segments_left	int8
-	control		int32
-	address		array[ipv6_addr]
 } [packed]
 
 cgw_csum_crc8_profile = CGW_CRC8PRF_UNSPEC, CGW_CRC8PRF_1U8, CGW_CRC8PRF_16U8, CGW_CRC8PRF_SFFID_XOR
